@@ -1,0 +1,13 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install ruff pytest
+      - run: ruff check .
+      # exit code 5 means no tests collected; switch to plain `pytest -q` once the first test exists
+      - run: pytest -q || [ $? -eq 5 ]
