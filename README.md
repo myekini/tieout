@@ -43,12 +43,12 @@ Tieout builds a small, fake version of that system and makes the hard part visib
 
 ## How it grows
 
-Each release adds one real problem and ships on its own.
+Each release adds one real problem and ships on its own. Tieout's assistant is **Teller**, the payments assistant: it starts with one skill and gains one each release.
 
-| Release | Problem | AI feature |
+| Release | Problem | Teller's new skill |
 |---|---|---|
 | **R1 Transfers** *(this design)* | Interbank transfers, timeouts, status queries, suspense, reversals; ledger vs switch log | Exception explainer |
-| R2 Settlement | End-of-day net settlement between banks; positions sum to zero; cutoffs and holidays | Ask Tieout agent and MCP server: "where is this transfer?" answered through read-only tools, with a timeline and cited records |
+| R2 Settlement | End-of-day net settlement between banks; positions sum to zero; cutoffs and holidays | Teller agent and MCP server: "where is this transfer?" answered through read-only tools, with a timeline and cited records |
 | R3 Bills & airtime | Pending vends, aggregator float, statement and commission matching | Statement mapper with validation |
 | R4 Cards, POS & ATM | Authorisation, clearing, settlement, merchant fees, ATM non-dispense, chargebacks | Dispute pack drafter |
 | R5 Partner-bank layer | Fintech ledger vs partner bank; missed and duplicate webhooks | The agent gets partner-bank and webhook tools |
@@ -150,7 +150,7 @@ stateDiagram-v2
     Resolved --> [*]
 ```
 
-## The exception explainer
+## The exception explainer (Teller's first skill)
 
 **What it can do**
 - Read the evidence for one case: the ledger lines, the switch record (or its absence), the status-query history and the suspense age.
