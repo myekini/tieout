@@ -48,10 +48,10 @@ Each release adds one real problem and ships on its own.
 | Release | Problem | AI feature |
 |---|---|---|
 | **R1 Transfers** *(this design)* | Interbank transfers, timeouts, status queries, suspense, reversals; ledger vs switch log | Exception explainer |
-| R2 Settlement | End-of-day net settlement between banks; positions sum to zero; cutoffs and holidays | Settlement-break narrator |
+| R2 Settlement | End-of-day net settlement between banks; positions sum to zero; cutoffs and holidays | Ask Tieout agent and MCP server: "where is this transfer?" answered through read-only tools, with a timeline and cited records |
 | R3 Bills & airtime | Pending vends, aggregator float, statement and commission matching | Statement mapper with validation |
 | R4 Cards, POS & ATM | Authorisation, clearing, settlement, merchant fees, ATM non-dispense, chargebacks | Dispute pack drafter |
-| R5 Partner-bank layer | Fintech ledger vs partner bank; missed and duplicate webhooks | Investigation agent (read-only tools) |
+| R5 Partner-bank layer | Fintech ledger vs partner bank; missed and duplicate webhooks | The agent gets partner-bank and webhook tools |
 | R6 Fraud & compliance | Mule-account patterns, transfer velocity, KYC limits | Suspicious-activity report drafter |
 
 ## What R1 does
@@ -64,7 +64,7 @@ Each release adds one real problem and ships on its own.
 | **Reconciliation** | Each bank's ledger matched to the switch log in ordered passes, every match carrying its evidence |
 | **Idempotent reruns** | Running the same inputs again changes nothing. Tested, not assumed |
 | **Exception queue** | Everything unresolved becomes a case with a state, an owner and evidence; every action goes to an append-only audit log |
-| **Exception explainer** | Says what happened to a stuck transfer in plain words, citing the records. Code checks every figure it quotes. If the evidence isn't there, it says so |
+| **Exception explainer** | Says what happened to a stuck transfer in plain words, citing the records, and drafts the message to the customer. Code checks every figure it quotes. If the evidence isn't there, it says so |
 
 ## Architecture
 
@@ -155,6 +155,7 @@ stateDiagram-v2
 **What it can do**
 - Read the evidence for one case: the ledger lines, the switch record (or its absence), the status-query history and the suspense age.
 - Pick one cause from a fixed list (timeout then credited, timeout then failed, duplicate session, late reversal, fee error, missing switch record) and propose one fix.
+- Draft a plain message for the customer (for example "your ₦10,000 was reversed on Thursday") for support staff to send.
 
 **What it can't do**
 - It **cannot** change data. Only an approved proposal does. The approval, the approver and the before and after state go to the audit log.
@@ -178,6 +179,8 @@ stateDiagram-v2
 | Narration injection | A narration containing text written to look like an instruction |
 
 ## Evaluation *(planned)*
+
+**Where AI never goes:** deciding a match, posting a reversal or credit, calculating fees, positions or deadlines. Code does all of these.
 
 | Area | Metric |
 |---|---|
